@@ -39,23 +39,27 @@ public class ProdutoDAO {
 
     public Produto consultarPorID(int id) {
         String sql = "SELECT * FROM produtos WHERE id_produto = ?";
-        try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
+        try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            if (rs.next()) {
-                Produto produto = new Produto();
-                produto.setId(rs.getInt("id_produto"));
-                produto.setNome(rs.getString("nome_produto"));
-                produto.setQuantidade(rs.getInt("quantidade"));
-                produto.setPreco(rs.getDouble("preco"));
-                produto.setStatus(rs.getString("status"));
-                return produto;
-            }
 
+            try (ResultSet rs = stmt.executeQuery()) {
+
+
+                if (rs.next()) {
+                    Produto produto = new Produto();
+                    produto.setId(rs.getInt("id_produto"));
+                    produto.setNome(rs.getString("nome_produto"));
+                    produto.setQuantidade(rs.getInt("quantidade"));
+                    produto.setPreco(rs.getDouble("preco"));
+                    produto.setStatus(rs.getString("status"));
+                    return produto;
+                }
+
+            }
         } catch (SQLException e) {
             System.err.println("Erro ao consultar produto por ID: " + e.getMessage());
         }
+
 
         return null;
 
